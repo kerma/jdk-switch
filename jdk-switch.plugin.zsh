@@ -15,16 +15,12 @@ else
 fi
 
 function jdkswitch(){
-	if [[ ${1} =~ ^[6-8]$ ]]; then
-		_save_jdk_setting "1.${1}"
-	elif [[ "${1}x" == "9x" || "${1}x" == "10x" || "${1}x" == "11x" ]]; then
-		_save_jdk_setting ${1}
-	elif [[ ${1} =~ ^1.[6-8]$ ]]; then
-		_save_jdk_setting ${1}
-	elif [[ "${1}x" == "x" || "${1}x" == "hx" ||"${1}x" == "helpx" ]]; then
+    if [[ "${1}x" == "x" || "${1}x" == "hx" ||"${1}x" == "helpx" ]]; then
 		_jdk_switch_help_page
 	elif [[ "${1}x" == "sx" || "${1}x" == "statusx" ]]; then
 		jdkstatus
+    elif $(/usr/libexec/java_home -v "${1}" &> /dev/null); then
+		_save_jdk_setting ${1}
 	else
 		echo 'No JDK version matched'
 	fi
@@ -57,7 +53,7 @@ function _save_jdk_setting(){
 	if [[ -d $JAVA_HOME_PATH ]]; then
 		echo "JDK_STATUS=${VERSION_CODE}" > $JDK_STATUS_FILE
 		if [[ -d $JAVA_HOME_PATH ]]; then
-			echo "JAVA_HOME=${JAVA_HOME_PATH}" >> $JDK_STATUS_FILE
+			echo "export JAVA_HOME=${JAVA_HOME_PATH}" >> $JDK_STATUS_FILE
 			echo "CLASSPATH=.:\$JAVA_HOME/lib/tools.jar:\$JAVA_HOME/lib/dt.jar" >> $JDK_STATUS_FILE
 			echo "PATH=\$JAVA_HOME/bin:\$PATH" >> $JDK_STATUS_FILE
 		fi
